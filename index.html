@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Brick Breaker</title>
+    <style>
+        body {
+    margin: 0;
+    padding: 0;
+}
+canvas {
+    background-color: #eee;
+    display: block;
+    margin: 0 auto;
+}
+#myCanvas {
+  border: 1px solid black;
+}
+
+#Canvas {
+  /* position the canvas on top of the first canvas */
+  position: absolute;
+  top: 200px;
+  left: 500px;
+  background: red;
+ 
+}
+       
+        .contener{
+            /* display: flex; */
+            /* justify-content: center; */
+            
+        }
+        .btn{
+            display: flex;
+            justify-content: center;
+            
+        }
+        .lever{
+            display: flex;
+        }
+        #start{
+            /* display: block; */
+            margin: auto;
+            margin-top: 50px;
+            border-radius: 10px;
+            background: rgb(49, 221, 107);
+        }
+        #tamngung{
+            /* display: block; */
+            margin: auto;
+            margin-top: 50px;
+            border-radius: 10px;
+            background: rgb(49, 221, 107);
+        }
+      
+       
+    </style>
+</head>
+<body>
+    <div class="contener">
+    <div class="position">
+        <canvas id="myCanvas" width="800;" height="600;" ></canvas>
+        <!-- <canvas id="Canvas" width="500" height="20" style="background: red; " ></canvas> -->
+       
+    </div>
+    <div class="btn">
+        <button id="start" style="width: 150px; height: 30px;">Start Game</button>
+        <button id="tamngung" style="width: 150px; height: 30px;">Pause Game</button>
+       
+    </div>
+    <!-- <div class="obstacle" id="obstacle1" style="width: 200px;  top:200px;
+    left: 800px;"></div> -->
+    <!-- <div class="obstacle" id="obstacle2"></div>
+    <div class="obstacle" id="obstacle3"></div> -->
+   
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+
+
+    var canvas = document.getElementById("myCanvas");
+    var tc1 = document.getElementById("Canvas");
+    var ctx = canvas.getContext("2d");
+    var dtBall = 10;
+    var x = canvas.width/2;
+    var y = canvas.height-30;
+    var dx = 2;
+    var dy = -2;
+    var tneHeight = 20;
+    var tnWidth = 100;
+    var paddleX = (canvas.width-tnWidth)/2;
+    var brickRow = 5;
+    var brickCol = 9;
+    var brickWidth = 75;
+    var brickHeight = 20;
+    var brickPadding = 10;
+    var brickOffsetTop = 30;
+    var brickOffsetLeft = 30;
+    var diem = 0;
+    var bricks = [];
+    // var obstacle = document.getElementById("obstacle1");
+    
+    // chứa số lượng gạch
+    for(var c=0; c<brickCol; c++) {
+        bricks[c] = [];
+        for(var r=0; r<brickRow; r++) {
+            bricks[c][r] = { x: 0, y: 0, status: 1 };
+        }
+    }
+    // nhận sự kiện từ bàn phím
+    document.addEventListener("keydown", phimphai, false);
+    document.addEventListener("keyup", phimtrai, false);
+    // nhận siwj kiện từ chuột
+    document.addEventListener("mousemove", chuot, false);
+
+    // khi nhấn phím thanh ngang bên dưới sẽ di chuyển theo phím phải
+    var rightP = false;
+    var leftP = false;
+    function phimphai(e) {
+        if(e.key == "phia" || e.key == "ArrowRight") {
+            rightP = true;
+        }
+        else if(e.key == "Left" || e.key == "ArrowLeft") {
+            leftP = true;
+        }
+    }
+    // khi nhấn phím thanh ngang bên dưới sẽ di chuyển theo phím trái
+
+    function phimtrai(e) {
+        if(e.key == "Right" || e.key == "ArrowRight") {
+            rightP = false;
+        }
+        else if(e.key == "Left" || e.key == "ArrowLeft") {
+            leftP = false;
+        }
+    }
+    // nhận sự kiện từ chuột
+    function chuot(e) {
+        var relativeX = e.clientX - canvas.offsetLeft;
+        if(relativeX > 0 && relativeX < canvas.width) {
+            paddleX = relativeX - tnWidth/2;
+        }
+    }
+
+    function collisionDetection() {
+        // mảng 2 chiều hiển thị số lượng gạch brickColumnCount số cột brickRowCount số hàng
+        for(var c=0; c<brickCol; c++) {
+            for(var r=0; r<brickRow; r++) {
+                var b = bricks[c][r];
+
+                if(b.status == 1) {
+                    // kiểm tra tạo độ bóng có trùng với 1 ô gạch nào hay không
+                    if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
+
+                        dy = -dy; // chiều mà bóng bay về khi va chạm vàogachj
+                        b.status = 0;
+                        diem++;
+                        if(diem == brickRow*brickCol) {
+                            alert("YOU WIN, CONGRATULATIONS!");
+                            document.location.reload();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+//vẽ bóng
+    function designBall() {
+        ctx.beginPath();
+        ctx.arc(x, y, dtBall, 0, Math.PI*2);
+        ctx.fillStyle = "#000";
+        ctx.fill();
+        ctx.closePath();
+        }
+        //vẽ lên thanh ngang đỡ bóng
+        function designPaddle() {
+        ctx.beginPath();
+        ctx.rect(paddleX, canvas.height-tneHeight, tnWidth, tneHeight);
+        ctx.fillStyle = "#000";
+        ctx.fill();
+        ctx.closePath();
+        }
+
+        // function designPaddle() {
+        // ctx.beginPath();
+        // ctx.rect(paddleX , canvas.height-200, tnWidth, tneHeight);
+        // ctx.fillStyle = "#000";
+        // ctx.fill();
+        // ctx.closePath();
+        // }
+
+       
+
+       
+
+
+
+        
+        function drawBricks() {
+        for(var c=0; c<brickCol; c++) {
+        for(var r=0; r<brickRow; r++) {
+        if(bricks[c][r].status == 1) {
+            // công thức tính toạ độ của ô gạch
+        var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+        var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+        bricks[c][r].x = brickX;
+        bricks[c][r].y = brickY;
+        ctx.beginPath();
+        ctx.rect(brickX, brickY, brickWidth, brickHeight);
+        ctx.fillStyle = "#000";
+        ctx.fill();
+        ctx.closePath();
+        }
+        }
+        }
+        }
+        
+        function drawDiem() {
+        ctx.font = "16px Arial";
+        ctx.fillStyle = "#000";
+        ctx.fillText("Điểm: "+diem, 8, 20);
+        }
+        //vẽ giao diện game 
+        function drawGD() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBricks();
+        designBall();
+        designPaddle();
+        // designPaddle1();
+        drawDiem();
+        collisionDetection();
+       
+        //xử lý va chạm của bóng với các biên đc tạo từ canvas
+        if(x + dx > canvas.width-dtBall || x + dx < dtBall) {
+            dx = -dx;
+        }
+        
+        if(y + dy < dtBall) {
+            dy = -dy;
+        }
+    //    xử lí va chạm với thanh điều khiển
+        else if(y + dy > canvas.height-dtBall) {
+            if(x > paddleX && x < paddleX + tnWidth) {
+                dy = -dy;
+            }
+           
+            else {
+                alert("GAME OVER");
+                document.location.reload();
+            }
+        }
+        // xử lý tốc độ di chuyển cảu thanh điều khiển
+        if(rightP && paddleX < canvas.width-tnWidth ) {
+            paddleX += 7;
+        }
+        else if(leftP && paddleX > 0) {
+            paddleX -= 7;
+        }
+        
+        x += dx;
+        y += dy;
+        }
+        //xử lý sự kiện mút bắt đầu 
+        var start = document.getElementById("start");
+        start.addEventListener("click", function() {
+        button = setInterval(drawGD, 10);
+});
+        //xử lý sự kiện nút tạm ngưng
+        var tamngung = document.getElementById("tamngung");
+        tamngung.addEventListener("click", function() {
+            clearInterval(button);
+        });
+       
+
+
+    </script>
+</body>
+</html>
