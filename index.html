@@ -167,13 +167,30 @@
         ctx.closePath();
         }
         //vẽ lên thanh ngang đỡ bóng
-        function designPaddle() {
-        ctx.beginPath();
-        ctx.rect(paddleX, canvas.height-tneHeight, tnWidth, tneHeight);
-        ctx.fillStyle = "#000";
-        ctx.fill();
-        ctx.closePath();
-        }
+        function drawSlider(){
+         scn.fillStyle = "#7FFF00";//màu nền cho thanh đỡ
+         scn.fillRect(slider.x, slider.y, slider.width, slider.height);// vẽ một hình chữ nhật bằng cách sử dụng fillRect() với tọa độ và kích thước được định nghĩa trong đối tượng paddle
+
+         scn.strokeStyle = "#00FFFF";//thiết lập màu cho đường viền của thanh đỡ bằng cách sử dụng thuộc tính strokeStyle
+         scn.strokeRect(slider.x, slider.y, slider.width, slider.height);
+     }    //vẽ một hình chữ nhật với đường viền bằng cách sử dụng strokeRect() với tọa độ và kích thước tương tự như bước trước
+
+     // điều khiển thanh trượt slider control
+     document.addEventListener("keydown", function(event){
+         if(event.keyCode == 37){ //Nếu người dùng nhấn phím mũi tên trái (keyCode=37), biến leftArrow được thiết lập thành true
+             to_the_left = true;
+         }else if(event.keyCode == 39){
+             to_the_right = true;
+         }
+     });
+     // theo dõi việc người dùng thả phím mũi tên trái hoặc phải
+     document.addEventListener("keyup", function(event){ //Khi người dùng thả phím mũi tên, sự kiện keyup được kích hoạt và mã phím của phím được trả về trong đối tượng event
+         if(event.keyCode == 37){
+             to_the_left = false;//totheleft sẽ được đặt về giá trị false để báo hiệu rằng phím đã được thả
+         }else if(event.keyCode == 39){
+             to_the_right = false;
+         }
+     });
 
         // function designPaddle() {
         // ctx.beginPath();
