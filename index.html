@@ -159,38 +159,45 @@
     }
 
 //vẽ bóng
-    function designBall() {
-        ctx.beginPath();
-        ctx.arc(x, y, dtBall, 0, Math.PI*2);
-        ctx.fillStyle = "#000";
-        ctx.fill();
-        ctx.closePath();
-        }
-        //vẽ lên thanh ngang đỡ bóng
-        function drawSlider(){
-         scn.fillStyle = "#7FFF00";//màu nền cho thanh đỡ
-         scn.fillRect(slider.x, slider.y, slider.width, slider.height);// vẽ một hình chữ nhật bằng cách sử dụng fillRect() với tọa độ và kích thước được định nghĩa trong đối tượng paddle
+  function drawball(){//vẽ bằng cách sử dụng hàm ctx.beginPath()
+         scn.beginPath();
+         scn.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2);//Sử dụng hàm scn.arc() để vẽ một hình tròn với tọa độ (x, y) và bán kính là ball.radius.
+         // Hàm này sử dụng toán tử Math.PI để tính toán giá trị độ dài cung của hình tròn.
+ 
+         scn.fillStyle = "#7FFF00";//tô màu cho hình tròn
+         scn.fill();//Gọi hàm ctx.fill() để vẽ hình tròn được tô màu.
 
-         scn.strokeStyle = "#00FFFF";//thiết lập màu cho đường viền của thanh đỡ bằng cách sử dụng thuộc tính strokeStyle
-         scn.strokeRect(slider.x, slider.y, slider.width, slider.height);
-     }    //vẽ một hình chữ nhật với đường viền bằng cách sử dụng strokeRect() với tọa độ và kích thước tương tự như bước trước
+         scn.strokeStyle = "#000000";//vẽ đường viền cho hình tròn
+         scn.stroke();//Gọi hàm ctx.stroke() để vẽ đường viền.
 
-     // điều khiển thanh trượt slider control
-     document.addEventListener("keydown", function(event){
-         if(event.keyCode == 37){ //Nếu người dùng nhấn phím mũi tên trái (keyCode=37), biến leftArrow được thiết lập thành true
-             to_the_left = true;
-         }else if(event.keyCode == 39){
-             to_the_right = true;
+         scn.closePath();//Kết thúc quá trình vẽ bằng cách sử dụng hàm ctx.closePath().
+     }
+
+     // di chuyển quả bóng
+     function moveball(){
+         ball.x += ball.dx;// thay đổi vị trí x của bóng bằng dx
+         ball.y += ball.dy;
+     }
+
+     // //kiểm tra va chạm bóng và tường và đáy
+     function ballConllision(){
+         if(ball.x + ball.radius > bgr.width || ball.x - ball.radius < 0){//Nếu tọa độ x của bóng vượt quá chiều rộng của canvas trừ đi bán kính của bóng hoặc
+             // tọa độ x của bóng nhỏ hơn bán kính của bóng, bóng sẽ chạm vào tường bên
+             ball.dx = - ball.dx;// phải đổi hướng di chuyển theo trục x bằng cách đổi dấu biến đổi dx của bóng.
+             wall.play();// âm thanh chạm tường sẽ phát
          }
-     });
-     // theo dõi việc người dùng thả phím mũi tên trái hoặc phải
-     document.addEventListener("keyup", function(event){ //Khi người dùng thả phím mũi tên, sự kiện keyup được kích hoạt và mã phím của phím được trả về trong đối tượng event
-         if(event.keyCode == 37){
-             to_the_left = false;//totheleft sẽ được đặt về giá trị false để báo hiệu rằng phím đã được thả
-         }else if(event.keyCode == 39){
-             to_the_right = false;
+
+         if(ball.y - ball.radius < 0){//Nếu tọa độ y của bóng nhỏ hơn bán kính của bóng, bóng sẽ chạm vào tường trên
+             ball.dy = -ball.dy;//phải đổi hướng di chuyển theo trục y bằng cách đổi dấu biến đổi dy của bóng
+             wall.play(); // âm thanh chạm tường
          }
-     });
+
+         if(ball.y + ball.radius > bgr.height){//Nếu tọa độ y của bóng vượt quá chiều cao của canvas trừ đi bán kính của bóng, bóng đã rơi xuống đáy
+             life--; //Biến LIFE sẽ bị giảm đi một đơn vị,
+             life_audio.play();//âm thanh LIFE_LOST sẽ được phát
+             resetball();//hàm resetBall() sẽ được gọi để đặt lại vị trí của bóng.
+         }
+     }
 
         // function designPaddle() {
         // ctx.beginPath();
